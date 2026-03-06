@@ -20,11 +20,21 @@ python3 -m http.server 4173
 
 Then visit `http://localhost:4173`.
 
-## How to update jobs from GUI
+## How to access admin panel
 
-1. Open **Admin Panel** from the top navigation.
-2. Fill the job form fields and click **Save Job** to publish.
-3. Click **Edit** on any existing item to update deadlines/details, then **Update Job**.
-4. Click **Delete** to remove outdated jobs.
+1. Click **Admin Panel** in the top navigation.
+2. Enter admin PIN in the popup.
+3. Default PIN is: `jobz123`.
+4. After unlock, you can add/edit/delete jobs in the dashboard section.
 
-> Jobs are persisted in browser local storage (`jobzshark.jobs.v1`).
+## Security notes (important)
+
+- The current admin protection is **client-side only** (PIN check in browser JavaScript).
+- It helps prevent casual access but is **not secure for production**.
+- A real secure setup should move admin features to a backend with:
+  - authenticated users (email/password or OAuth)
+  - server-side authorization (admin roles)
+  - secure API endpoints for CRUD operations
+  - database storage + audit logs
+
+> Jobs are currently persisted in browser local storage (`jobzshark.jobs.v1`).

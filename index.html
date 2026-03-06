@@ -18,7 +18,7 @@
         <div class="brand">job<span>Z</span> shar<span>K</span></div>
         <div class="nav-actions">
           <a class="btn ghost" href="#notify">Get Alerts</a>
-          <a class="btn ghost" href="#adminPanel">Admin Panel</a>
+          <button class="btn ghost" id="openAdminAccessBtn" type="button">Admin Panel</button>
         </div>
       </nav>
       <div class="wrap hero-content">
@@ -85,8 +85,11 @@
         <div id="jobsGrid" class="jobs-grid"></div>
       </section>
 
-      <section class="wrap section admin" id="adminPanel">
-        <h2>Admin Dashboard (GUI)</h2>
+      <section class="wrap section admin hidden" id="adminPanel">
+        <div class="section-head">
+          <h2>Admin Dashboard (GUI)</h2>
+          <button id="adminLockBtn" class="btn ghost" type="button">Lock Panel</button>
+        </div>
         <p class="meta">
           Add upcoming jobs, update deadlines, and edit details directly from this panel. Data is stored in your browser.
         </p>
@@ -140,6 +143,19 @@
         <p class="message" id="notifyMessage"></p>
       </section>
     </main>
+
+    <div id="adminAuthModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="adminAuthTitle">
+      <div class="modal-card modal-sm">
+        <button id="adminAuthClose" class="icon-btn" type="button" aria-label="Close admin access">✕</button>
+        <h3 id="adminAuthTitle">Admin Access</h3>
+        <p class="meta">Enter admin PIN to open dashboard. Default PIN: <strong>jobz123</strong></p>
+        <form id="adminAuthForm" class="auth-form">
+          <label>Admin PIN <input id="adminPinInput" type="password" required /></label>
+          <button class="btn" type="submit">Unlock</button>
+          <p id="adminAuthMessage" class="message"></p>
+        </form>
+      </div>
+    </div>
 
     <div id="jobModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <div class="modal-card">

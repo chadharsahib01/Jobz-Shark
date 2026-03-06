@@ -35,6 +35,8 @@ const seedJobs = [
 ];
 
 const STORAGE_KEY = "jobzshark.jobs.v1";
+const ADMIN_UNLOCK_KEY = "jobzshark.admin.unlocked";
+const ADMIN_PIN = "jobz123";
 
 let jobs = loadJobs();
 
@@ -54,6 +56,15 @@ const modalDeadline = document.getElementById("modalDeadline");
 const modalWho = document.getElementById("modalWho");
 const modalApply = document.getElementById("modalApply");
 const modalWhatsappShare = document.getElementById("modalWhatsappShare");
+
+const adminPanel = document.getElementById("adminPanel");
+const openAdminAccessBtn = document.getElementById("openAdminAccessBtn");
+const adminLockBtn = document.getElementById("adminLockBtn");
+const adminAuthModal = document.getElementById("adminAuthModal");
+const adminAuthClose = document.getElementById("adminAuthClose");
+const adminAuthForm = document.getElementById("adminAuthForm");
+const adminPinInput = document.getElementById("adminPinInput");
+const adminAuthMessage = document.getElementById("adminAuthMessage");
 
 const jobForm = document.getElementById("jobForm");
 const jobIdInput = document.getElementById("jobId");
@@ -97,6 +108,36 @@ function loadJobs() {
 
 function saveJobs() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(jobs));
+}
+
+function isAdminUnlocked() {
+  return sessionStorage.getItem(ADMIN_UNLOCK_KEY) === "yes";
+}
+
+function updateAdminPanelVisibility() {
+  adminPanel.classList.toggle("hidden", !isAdminUnlocked());
+}
+
+function openAdminAuthModal() {
+  adminAuthForm.reset();
+  adminAuthMessage.textContent = "";
+  adminAuthModal.classList.remove("hidden");
+}
+
+function closeAdminAuthModal() {
+  adminAuthModal.classList.add("hidden");
+}
+
+function unlockAdminPanel() {
+  sessionStorage.setItem(ADMIN_UNLOCK_KEY, "yes");
+  updateAdminPanelVisibility();
+  closeAdminAuthModal();
+  adminPanel.scrollIntoView({ behavior: "smooth" });
+}
+
+function lockAdminPanel() {
+  sessionStorage.removeItem(ADMIN_UNLOCK_KEY);
+  updateAdminPanelVisibility();
 }
 
 function createWhatsAppShareUrl(job) {
@@ -264,6 +305,30 @@ resetJobBtn.addEventListener("click", resetForm);
 );
 searchInput.addEventListener("input", applyFilters);
 
+openAdminAccessBtn.addEventListener("click", () => {
+  if (isAdminUnlocked()) {
+    adminPanel.scrollIntoView({ behavior: "smooth" });
+    return;
+  }
+  openAdminAuthModal();
+});
+adminLockBtn.addEventListener("click", lockAdminPanel);
+adminAuthClose.addEventListener("click", closeAdminAuthModal);
+adminAuthModal.addEventListener("click", (event) => {
+  if (event.target === adminAuthModal) {
+    closeAdminAuthModal();
+  }
+});
+adminAuthForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  if (adminPinInput.value === ADMIN_PIN) {
+    unlockAdminPanel();
+    return;
+  }
+
+  adminAuthMessage.textContent = "Incorrect PIN. Please try again.";
+});
+
 modalClose.addEventListener("click", closeDetails);
 jobModal.addEventListener("click", (event) => {
   if (event.target === jobModal) {
@@ -273,6 +338,9 @@ jobModal.addEventListener("click", (event) => {
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && !jobModal.classList.contains("hidden")) {
     closeDetails();
+  }
+  if (event.key === "Escape" && !adminAuthModal.classList.contains("hidden")) {
+    closeAdminAuthModal();
   }
 });
 
@@ -286,4 +354,5 @@ notifyForm.addEventListener("submit", (event) => {
 });
 
 renderAdminJobs();
+updateAdminPanelVisibility();
 applyFilters();
